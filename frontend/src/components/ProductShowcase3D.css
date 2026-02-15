@@ -1,0 +1,124 @@
+.showcase-3d {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.showcase-3d-canvas-wrap {
+  width: 100%;
+  height: 420px;
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 217, 61, 0.2);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 217, 61, 0.05);
+}
+
+.showcase-3d-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.showcase-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--yellow);
+  background: transparent;
+  color: var(--yellow);
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.showcase-btn:hover {
+  background: var(--yellow);
+  color: var(--black);
+  transform: scale(1.08);
+}
+
+.showcase-info {
+  flex: 1;
+  min-width: 200px;
+  text-align: center;
+}
+
+.showcase-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--leading-tight);
+  color: var(--white);
+  margin-bottom: 0.25rem;
+}
+
+.showcase-price {
+  font-family: var(--font-body);
+  color: var(--yellow);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  margin-bottom: 0.75rem;
+}
+
+.showcase-add {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  background: var(--yellow);
+  color: var(--black);
+  border: none;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wider);
+  line-height: var(--leading-snug);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.showcase-add:hover {
+  background: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 217, 61, 0.4);
+}
+
+.showcase-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.showcase-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: transparent;
+  transition: all 0.25s ease;
+}
+
+.showcase-dot:hover,
+.showcase-dot.active {
+  background: var(--yellow);
+  border-color: var(--yellow);
+}
+
+@media (max-width: 768px) {
+  .showcase-3d-canvas-wrap {
+    height: 320px;
+  }
+  .showcase-3d-controls {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,47 @@
+.flying-bee {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px;
+  margin-top: -20px;
+  z-index: 9998;
+  pointer-events: none;
+  left: 20%;
+  top: 20%;
+  transition: left 4s ease-in-out, top 4s ease-in-out;
+}
+
+.flying-bee-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 6px rgba(255, 217, 61, 0.3));
+  animation: bee-float 2s ease-in-out infinite;
+}
+
+.flying-bee-svg .wing-left,
+.flying-bee-svg .wing-right {
+  transform-origin: 32px 32px;
+  animation: wing-flap 0.15s ease-in-out infinite;
+}
+
+.flying-bee-svg .wing-right {
+  animation-delay: 0.075s;
+}
+
+@keyframes bee-float {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
+@keyframes wing-flap {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.6);
+  }
+}

@@ -1,0 +1,64 @@
+.footer {
+  background: var(--black-soft);
+  border-top: 1px solid rgba(255, 217, 61, 0.2);
+  padding: 4rem 2rem 2rem;
+  margin-top: auto;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-tight);
+  color: var(--white);
+  text-decoration: none;
+}
+
+.footer-logo .logo-bee {
+  color: var(--yellow);
+}
+
+.footer-tagline {
+  font-family: var(--font-body);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--leading-normal);
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-links a {
+  font-family: var(--font-body);
+  color: var(--white);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--yellow);
+}
+
+.footer-copy {
+  font-family: var(--font-body);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-normal);
+}
