@@ -37,6 +37,7 @@ Open **http://localhost:5173** in the browser. Use the **→** button or dots to
 
 **Production (e.g. Vercel) – login/auth:**  
 - Deploy the **backend** somewhere (e.g. [Render](https://render.com), Railway).  
+- **Render:** In the dashboard, set **Branch** to **`main`** (not `master`). Set **Root Directory** to **`backend`**, **Build Command** to **`npm install`**, **Start Command** to **`npm start`**. Add env vars: `JWT_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`. Or deploy from repo root: the root `package.json` has `start` and `postinstall` so `yarn install` then `yarn start` runs the backend.  
 - In **Vercel** → Project → Settings → Environment Variables, add **`BACKEND_URL`** = your backend URL (e.g. `https://your-app.onrender.com`).  
 - The frontend includes an API proxy (`frontend/api/[[...path]].js`) that forwards `/api/*` to `BACKEND_URL`, so login and auth work without CORS. Redeploy the frontend after setting `BACKEND_URL`.  
 - Alternatively, set **`VITE_API_URL`** to your backend URL so the frontend calls the backend directly (no proxy).

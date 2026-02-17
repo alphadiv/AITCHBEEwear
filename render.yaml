@@ -1,0 +1,20 @@
+# Render Blueprint: deploy backend API
+# In Render Dashboard: use branch "main", not master.
+# For Backend service only: set Root Directory to "backend" (or leave empty to use root package.json).
+
+services:
+  - type: web
+    name: aitchbee-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
