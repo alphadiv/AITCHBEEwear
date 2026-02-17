@@ -73,7 +73,16 @@ export default function ProductShowcase3D({ products, onSelect }) {
   return (
     <div className="showcase-3d">
       <div className="showcase-3d-canvas-wrap">
-        <Canvas camera={{ position: [0, 0, 12], fov: 45 }} dpr={[1, 2]}>
+        <Canvas
+          camera={{ position: [0, 0, 12], fov: 45 }}
+          dpr={[1, 2]}
+          onCreated={({ gl }) => {
+            const canvas = gl.domElement;
+            canvas.addEventListener('webglcontextlost', (e) => {
+              e.preventDefault();
+            });
+          }}
+        >
           <Suspense fallback={null}>
             <Scene products={products} activeIndex={activeIndex} />
           </Suspense>

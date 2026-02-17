@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { getApiBase, safeJson } from '../utils/api';
 
 const AuthContext = createContext(null);
 
@@ -30,13 +31,12 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    fetch('/api/auth/me', {
+    fetch(`${getApiBase()}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
-        const contentType = res.headers.get('content-type') || '';
-        if (!contentType.includes('application/json')) return Promise.reject(new Error('Not JSON'));
-        return res.ok ? res.json() : Promise.reject();
+        if (!res.ok) return Promise.reject();
+        return safeJson(res);
       })
       .then((data) => {
         setUser(data);
@@ -45,41 +45,25 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, [token]);
 
-  const parseJsonResponse = async (res) => {
-    const text = await res.text();
-    const contentType = res.headers.get('content-type') || '';
-    if (!contentType.includes('application/json')) {
-      if (text.trimStart().startsWith('<')) {
-        throw new Error('Server not reachable. Start the backend with: cd backend && npm start');
-      }
-      throw new Error('Invalid server response');
-    }
-    try {
-      return JSON.parse(text);
-    } catch {
-      throw new Error('Server not reachable. Start the backend with: cd backend && npm start');
-    }
-  };
-
   const login = async (email, password) => {
-    const res = await fetch('/api/auth/login', {
+    const res = await fetch(`${getApiBase()}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
-    const data = await parseJsonResponse(res);
+    const data = await safeJson(res);
     if (!res.ok) throw new Error(data.error || 'Login failed');
     setToken(data.token, data.user);
     return data.user;
   };
 
   const register = async (email, password, name, phone, countryCode) => {
-    const res = await fetch('/api/auth/register', {
+    const res = await fetch(`${getApiBase()}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, name: name || undefined, phone, countryCode }),
     });
-    const data = await parseJsonResponse(res);
+    const data = await safeJson(res);
     if (!res.ok) throw new Error(data.error || 'Registration failed');
     setToken(data.token, data.user);
     return data.user;

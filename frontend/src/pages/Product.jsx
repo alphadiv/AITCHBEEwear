@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { getApiBase, safeJson } from '../utils/api';
 import { StarRatingDisplay, StarRatingInput } from '../components/StarRating';
 import './Product.css';
 
@@ -13,7 +14,7 @@ export default function Product() {
   const [ratingSubmitting, setRatingSubmitting] = useState(false);
 
   const fetchProduct = () => {
-    fetch(`/api/products/${id}`, { headers: authHeader() })
+    fetch(`${getApiBase()}/api/products/${id}`, { headers: authHeader() })
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then(setProduct)
       .catch(() => setProduct(null))
@@ -37,13 +38,13 @@ export default function Product() {
     if (!user) return;
     setRatingSubmitting(true);
     try {
-      const res = await fetch(`/api/products/${id}/rate`, {
+      const res = await fetch(`${getApiBase()}/api/products/${id}/rate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeader() },
         body: JSON.stringify({ rating }),
       });
-      const data = await res.json();
-      if (res.ok) setProduct(data);
+      const data = await safeJson(res).catch(() => null);
+      if (res.ok && data) setProduct(data);
     } finally {
       setRatingSubmitting(false);
     }

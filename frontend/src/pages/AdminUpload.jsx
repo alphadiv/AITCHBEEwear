@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getApiBase, safeJson } from '../utils/api';
 import './AdminUpload.css';
 
 const CATEGORIES = ['T-Shirts', 'Hoodies', 'Sweatshirts', 'Accessories', 'Other'];
@@ -74,7 +75,7 @@ export default function AdminUpload() {
           reader.readAsDataURL(imageFile);
         });
       }
-      const res = await fetch('/api/admin/products', {
+      const res = await fetch(`${getApiBase()}/api/admin/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeader() },
         body: JSON.stringify({
@@ -87,7 +88,7 @@ export default function AdminUpload() {
           imageBase64,
         }),
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.error || 'Upload failed');
       setSuccess(true);
       setForm({ name: '', price: '', description: '', category: '', stock: '0', colors: [] });

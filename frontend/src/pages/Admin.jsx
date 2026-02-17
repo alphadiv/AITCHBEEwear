@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getApiBase, safeJson } from '../utils/api';
 import './Admin.css';
 
 export default function Admin() {
@@ -20,11 +21,12 @@ export default function Admin() {
     }
     if (user?.role !== 'admin') return;
 
+    const base = getApiBase();
     const h = authHeader();
     Promise.all([
-      fetch('/api/admin/stats', { headers: h }).then((r) => r.json()),
-      fetch('/api/admin/orders', { headers: h }).then((r) => r.json()),
-      fetch('/api/admin/products', { headers: h }).then((r) => r.json()),
+      fetch(`${base}/api/admin/stats`, { headers: h }).then((r) => r.ok ? safeJson(r) : Promise.reject()),
+      fetch(`${base}/api/admin/orders`, { headers: h }).then((r) => r.ok ? safeJson(r) : Promise.reject()),
+      fetch(`${base}/api/admin/products`, { headers: h }).then((r) => r.ok ? safeJson(r) : Promise.reject()),
     ])
       .then(([s, o, p]) => {
         setStats(s);
@@ -38,12 +40,12 @@ export default function Admin() {
   const updateStock = (productId) => {
     const v = parseInt(stockValue, 10);
     if (isNaN(v) || v < 0) return;
-    fetch(`/api/admin/products/${productId}/stock`, {
+    fetch(`${getApiBase()}/api/admin/products/${productId}/stock`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', ...authHeader() },
       body: JSON.stringify({ stock: v }),
     })
-      .then((r) => r.json())
+      .then((r) => r.ok ? safeJson(r) : Promise.reject())
       .then((p) => {
         setProducts((prev) => prev.map((x) => (x.id === p.id ? { ...x, stock: p.stock } : x)));
         setEditingStock(null);

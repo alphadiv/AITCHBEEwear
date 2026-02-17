@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getApiBase } from '../utils/api';
 import ProductShowcase3D from '../components/ProductShowcase3D';
 import logoImg from '../aitchbee.png';
 import './Home.css';
@@ -9,8 +10,8 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/products')
-      .then((res) => res.json())
+    fetch(`${getApiBase()}/api/products`)
+      .then((res) => res.ok ? res.json() : Promise.reject())
       .then(setProducts)
       .catch(() => setProducts([
         { id: '1', name: 'AITCHBEE Hive Tee', price: 49.99, image: '', description: '', category: 'T-Shirts', colors: [] },

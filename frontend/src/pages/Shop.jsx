@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getApiBase } from '../utils/api';
 import { StarRatingDisplay } from '../components/StarRating';
 import './Shop.css';
 
@@ -10,8 +11,8 @@ export default function Shop() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    fetch('/api/products', { headers: authHeader() })
-      .then((res) => res.json())
+    fetch(`${getApiBase()}/api/products`, { headers: authHeader() })
+      .then((res) => res.ok ? res.json() : Promise.reject())
       .then((data) => {
         setProducts(data);
         setLoaded(true);

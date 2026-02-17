@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getApiBase, safeJson } from '../utils/api';
 import './Cart.css';
 
 export default function Cart() {
@@ -34,22 +35,22 @@ export default function Cart() {
       setCheckingOut(true);
       try {
         const orderItems = items.map((i) => ({ productId: i.id, quantity: i.quantity || 1 }));
-        const res = await fetch('/api/orders', {
+        const res = await fetch(`${getApiBase()}/api/orders`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...authHeader() },
           body: JSON.stringify({ items: orderItems }),
         });
+        const data = await safeJson(res).catch(() => ({}));
         if (res.ok) {
           localStorage.setItem('aitchbee-cart', '[]');
           window.dispatchEvent(new CustomEvent('aitchbee-cart-update'));
           setItems([]);
           setOrderSuccess(true);
         } else {
-          const data = await res.json();
           alert(data.error || 'Checkout failed');
         }
       } catch (e) {
-        alert('Checkout failed');
+        alert(e.message || 'Checkout failed');
       } finally {
         setCheckingOut(false);
       }

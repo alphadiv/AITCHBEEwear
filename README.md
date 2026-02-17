@@ -21,6 +21,8 @@ npm start
 
 API runs at **http://localhost:3001**.
 
+Copy `backend/.env.example` to `backend/.env` and set `JWT_SECRET`. To use **Supabase** as the database, also set `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (see [Database (Supabase)](#database-supabase) below). If you omit them, the API uses an in-memory store.
+
 ### Frontend
 
 ```bash
@@ -32,3 +34,25 @@ npm run dev
 Frontend runs at **http://localhost:5173** and proxies `/api` to the backend.
 
 Open **http://localhost:5173** in the browser. Use the **→** button or dots to switch products in the 3D showcase; move the mouse to see the cursor bee and the flying bee on the page.
+
+**Production (e.g. Vercel):** The frontend calls the backend at `/api/*`. When the frontend is deployed on a different host (e.g. Vercel), set **`VITE_API_URL`** in the frontend build to your backend URL (e.g. `https://your-api.onrender.com`). In Vercel: Project → Settings → Environment Variables → add `VITE_API_URL`, then redeploy.
+
+## Database (Supabase)
+
+1. Create a project at [supabase.com](https://supabase.com) and get your project URL and the **service_role** key (Project Settings → API).
+2. In the Supabase **SQL Editor**, run the migration file **`supabase/migrations/20250216000000_initial_schema.sql`** (creates tables: `users`, `products`, `product_ratings`, `orders`, `order_items`, `verification_codes`, and seeds the initial products).
+3. In `backend/.env` set:
+   - `SUPABASE_URL=https://your-project.supabase.co`
+   - `SUPABASE_SERVICE_ROLE_KEY=your-service-role-key`
+4. Restart the backend. It will use Supabase for all data and seed the default admin (`admin@aitchbee.com` / `admin123`) and test user (`buyer@test.com` / `buyer123`) if they don’t exist.
+
+## Deploy on Vercel
+
+1. **Default branch (GitHub)**  
+   In your repo: **Settings → General → Default branch** → set to **`main`** so Vercel deploys from `main`.
+
+2. **Vercel project**  
+   - **Option A (recommended):** Leave **Root Directory** empty. The root `vercel.json` will run `npm install` and `npm run build` inside `frontend` and use `frontend/dist` as output.  
+   - **Option B:** Set **Root Directory** to **`frontend`**. Then `frontend/vercel.json` is used and the build runs from the `frontend` folder.
+
+   In both cases, rewrites are set so that `/favicon.ico`, `/bee.svg`, and `/assets/*` are served as files, and all other paths fall back to `index.html` (SPA routing).

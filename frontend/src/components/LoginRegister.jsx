@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { getApiBase, safeJson } from '../utils/api';
 import CountryCodeSelector from './CountryCodeSelector';
 import './LoginRegister.css';
 
@@ -25,12 +26,12 @@ export default function LoginRegister({ onClose }) {
     setError('');
     setSendingCode(true);
     try {
-      const res = await fetch('/api/auth/send-verification', {
+      const res = await fetch(`${getApiBase()}/api/auth/send-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: `${countryCode}${phone}` }),
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.error || 'Failed to send code');
       setStep('verify');
     } catch (err) {
@@ -48,12 +49,12 @@ export default function LoginRegister({ onClose }) {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/verify-phone', {
+      const res = await fetch(`${getApiBase()}/api/auth/verify-phone`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: `${countryCode}${phone}`, code: verificationCode }),
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.error || 'Invalid code');
       await register(email, password, name || undefined, `${countryCode}${phone}`, countryCode);
       onClose?.();
