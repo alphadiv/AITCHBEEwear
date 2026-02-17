@@ -123,11 +123,11 @@ app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password, name, phone, countryCode } = req.body || {};
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
-    if (!phone) return res.status(400).json({ error: 'Phone number required' });
-    const fullPhone = countryCode ? `${countryCode}${phone}` : phone;
+    const rawPhone = (phone || '').trim();
+    const fullPhone = rawPhone ? (countryCode ? `${countryCode}${rawPhone}` : rawPhone) : null;
     if (useSupabase) {
       if (await db.userExistsByEmail(email)) return res.status(400).json({ error: 'Email already registered' });
-      if (await db.userExistsByPhone(fullPhone)) return res.status(400).json({ error: 'Phone already registered' });
+      if (fullPhone && (await db.userExistsByPhone(fullPhone))) return res.status(400).json({ error: 'Phone already registered' });
       const hash = await bcrypt.hash(password, 10);
       const user = { id: 'u-' + Date.now(), email: email.toLowerCase(), name: name || email.split('@')[0], phone: fullPhone, passwordHash: hash, role: 'user' };
       await db.createUser(user);
@@ -135,7 +135,7 @@ app.post('/api/auth/register', async (req, res) => {
       return res.status(201).json({ token, user: { id: user.id, email: user.email, name: user.name, phone: user.phone, role: user.role } });
     }
     if (users.some((u) => u.email.toLowerCase() === email.toLowerCase())) return res.status(400).json({ error: 'Email already registered' });
-    if (users.some((u) => u.phone === fullPhone)) return res.status(400).json({ error: 'Phone already registered' });
+    if (fullPhone && users.some((u) => u.phone === fullPhone)) return res.status(400).json({ error: 'Phone already registered' });
     const hash = await bcrypt.hash(password, 10);
     const user = { id: 'u-' + Date.now(), email: email.toLowerCase(), name: name || email.split('@')[0], phone: fullPhone, passwordHash: hash, role: 'user' };
     users.push(user);
