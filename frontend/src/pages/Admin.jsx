@@ -49,6 +49,9 @@ export default function Admin() {
       .then((p) => {
         setProducts((prev) => prev.map((x) => (x.id === p.id ? { ...x, stock: p.stock } : x)));
         setEditingStock(null);
+      })
+      .catch(() => {
+        setEditingStock(null);
       });
   };
 

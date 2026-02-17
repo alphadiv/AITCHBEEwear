@@ -10,6 +10,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setTokenState] = useState(() => localStorage.getItem(TOKEN_KEY));
   const [loading, setLoading] = useState(!!localStorage.getItem(TOKEN_KEY));
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const openAuthModal = () => setAuthModalOpen(true);
 
   const setToken = (t, u) => {
     if (t) {
@@ -73,8 +75,16 @@ export function AuthProvider({ children }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, name: name || undefined, phone, countryCode }),
     });
-    const data = await safeJson(res);
-    if (!res.ok) throw new Error(data.error || 'Registration failed');
+    let data;
+    try {
+      data = await safeJson(res);
+    } catch (parseErr) {
+      if (res.status === 405) throw new Error('Registration not available. Set BACKEND_URL in Vercel or deploy the backend.');
+      if (res.status === 503) throw new Error('Backend not configured.');
+      throw new Error(parseErr.message || 'Invalid response from server');
+    }
+    if (!res.ok) throw new Error(data?.error || 'Registration failed');
+    if (!data.token || !data.user) throw new Error('Invalid registration response');
     setToken(data.token, data.user);
     return data.user;
   };
@@ -84,7 +94,7 @@ export function AuthProvider({ children }) {
   const authHeader = () => (token ? { Authorization: `Bearer ${token}` } : {});
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout, authHeader, setUser }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout, authHeader, setUser, authModalOpen, setAuthModalOpen, openAuthModal }}>
       {children}
     </AuthContext.Provider>
   );

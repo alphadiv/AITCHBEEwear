@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getApiBase, safeJson } from '../utils/api';
+import { getApiBase, getAssetUrl, safeJson } from '../utils/api';
 import { StarRatingDisplay, StarRatingInput } from '../components/StarRating';
 import './Product.css';
 
@@ -14,15 +14,15 @@ export default function Product() {
   const [ratingSubmitting, setRatingSubmitting] = useState(false);
 
   const fetchProduct = () => {
+    setLoading(true);
     fetch(`${getApiBase()}/api/products/${id}`, { headers: authHeader() })
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((res) => (res.ok ? safeJson(res) : Promise.reject()))
       .then(setProduct)
       .catch(() => setProduct(null))
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    setLoading(true);
     fetchProduct();
   }, [id, user?.id]);
 
@@ -59,7 +59,7 @@ export default function Product() {
       <div className="product-layout">
         <div className="product-image-wrap">
           {product.image?.startsWith('/uploads/') ? (
-            <img src={product.image} alt={product.name} className="product-image-real" />
+            <img src={getAssetUrl(product.image)} alt={product.name} className="product-image-real" />
           ) : (
             <div className="product-image-placeholder">
               <span className="product-initial">{product.name.charAt(0)}</span>

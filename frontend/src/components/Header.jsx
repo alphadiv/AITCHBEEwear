@@ -8,10 +8,9 @@ import './Header.css';
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, authModalOpen, setAuthModalOpen } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
-  const [authOpen, setAuthOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -77,7 +76,7 @@ export default function Header() {
                 </button>
               </>
             ) : (
-              <button type="button" className="nav-link nav-btn nav-login" onClick={() => setAuthOpen(true)}>
+              <button type="button" className="nav-link nav-btn nav-login" onClick={() => setAuthModalOpen(true)}>
                 Login
               </button>
             )}
@@ -85,7 +84,7 @@ export default function Header() {
         </div>
         <div className="header-bottom-line" />
       </header>
-      {authOpen && <LoginRegister onClose={() => setAuthOpen(false)} />}
+      {authModalOpen && <LoginRegister onClose={() => setAuthModalOpen(false)} />}
     </>
   );
 }

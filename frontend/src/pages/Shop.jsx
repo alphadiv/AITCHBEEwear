@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getApiBase } from '../utils/api';
+import { getApiBase, getAssetUrl } from '../utils/api';
 import { StarRatingDisplay } from '../components/StarRating';
 import './Shop.css';
 
@@ -44,7 +44,7 @@ export default function Shop() {
           >
             <div className="product-card-image">
               {p.image?.startsWith('/uploads/') ? (
-                <img src={p.image} alt={p.name} className="product-card-img" />
+                <img src={getAssetUrl(p.image)} alt={p.name} className="product-card-img" />
               ) : (
                 <div className="product-placeholder">
                   <span className="product-initial">{p.name.charAt(0)}</span>

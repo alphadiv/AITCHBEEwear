@@ -6,6 +6,13 @@ export function getApiBase() {
   return (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 }
 
+/** Full URL for backend-served assets (e.g. /uploads/xxx). Use for img src in production. */
+export function getAssetUrl(path) {
+  if (!path || typeof path !== 'string') return path;
+  if (path.startsWith('/uploads/')) return getApiBase() + path;
+  return path;
+}
+
 /** Safe JSON parse from Response; avoids "Unexpected end of JSON input" on 405/HTML. */
 export async function safeJson(res) {
   const text = await res.text();

@@ -5,7 +5,7 @@ import { getApiBase, safeJson } from '../utils/api';
 import './Cart.css';
 
 export default function Cart() {
-  const { user, authHeader } = useAuth();
+  const { user, authHeader, openAuthModal } = useAuth();
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [mounted, setMounted] = useState(false);
@@ -143,7 +143,9 @@ export default function Cart() {
             {checkingOut ? 'Placing order...' : 'Checkout'}
           </button>
         ) : (
-          <p className="cart-login-hint">Login to place an order</p>
+          <button type="button" className="btn btn-primary cart-login-cta" onClick={openAuthModal}>
+            Login to place an order
+          </button>
         )}
       </div>
     </div>

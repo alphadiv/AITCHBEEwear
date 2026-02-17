@@ -3,7 +3,7 @@ import './Footer.css';
 
 export default function Footer() {
   return (
-    <footer className="footer">
+    <footer className="footer" id="contact">
       <div className="footer-inner">
         <Link to="/" className="footer-logo">AITCH<span className="logo-bee">BEE</span></Link>
         <p className="footer-tagline">Branding clothes. Buzzing style.</p>
