@@ -35,7 +35,11 @@ Frontend runs at **http://localhost:5173** and proxies `/api` to the backend.
 
 Open **http://localhost:5173** in the browser. Use the **→** button or dots to switch products in the 3D showcase; move the mouse to see the cursor bee and the flying bee on the page.
 
-**Production (e.g. Vercel):** The frontend calls the backend at `/api/*`. When the frontend is deployed on a different host (e.g. Vercel), set **`VITE_API_URL`** in the frontend build to your backend URL (e.g. `https://your-api.onrender.com`). In Vercel: Project → Settings → Environment Variables → add `VITE_API_URL`, then redeploy.
+**Production (e.g. Vercel) – login/auth:**  
+- Deploy the **backend** somewhere (e.g. [Render](https://render.com), Railway).  
+- In **Vercel** → Project → Settings → Environment Variables, add **`BACKEND_URL`** = your backend URL (e.g. `https://your-app.onrender.com`).  
+- The frontend includes an API proxy (`frontend/api/[[...path]].js`) that forwards `/api/*` to `BACKEND_URL`, so login and auth work without CORS. Redeploy the frontend after setting `BACKEND_URL`.  
+- Alternatively, set **`VITE_API_URL`** to your backend URL so the frontend calls the backend directly (no proxy).
 
 ## Database (Supabase)
 

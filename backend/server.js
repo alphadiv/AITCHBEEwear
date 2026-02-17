@@ -20,7 +20,7 @@ const users = [];
 const orders = [];
 const verificationCodes = {};
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 app.use('/uploads', express.static(UPLOADS_DIR));
 
@@ -149,12 +149,17 @@ app.post('/api/auth/register', async (req, res) => {
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
-    if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
-    const user = useSupabase ? await db.getUserByEmail(email) : users.find((u) => u.email.toLowerCase() === email.toLowerCase());
-    if (!user || !(await bcrypt.compare(password, user.passwordHash))) return res.status(401).json({ error: 'Invalid credentials' });
+    const e = (typeof email === 'string' ? email : '').trim();
+    const p = typeof password === 'string' ? password : '';
+    if (!e || !p) return res.status(400).json({ error: 'Email and password required' });
+    const user = useSupabase ? await db.getUserByEmail(e) : users.find((u) => u.email.toLowerCase() === e.toLowerCase());
+    if (!user) return res.status(401).json({ error: 'Invalid email or password' });
+    const match = await bcrypt.compare(p, user.passwordHash);
+    if (!match) return res.status(401).json({ error: 'Invalid email or password' });
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
-  } catch (e) {
+    res.status(200).json({ token, user: { id: user.id, email: user.email, name: user.name, phone: user.phone, role: user.role } });
+  } catch (err) {
+    console.error('[auth/login]', err);
     res.status(500).json({ error: 'Login failed' });
   }
 });

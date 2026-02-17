@@ -46,13 +46,23 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   const login = async (email, password) => {
-    const res = await fetch(`${getApiBase()}/api/auth/login`, {
+    const base = getApiBase();
+    const url = `${base}/api/auth/login`;
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email: String(email).trim(), password: String(password) }),
     });
-    const data = await safeJson(res);
-    if (!res.ok) throw new Error(data.error || 'Login failed');
+    let data;
+    try {
+      data = await safeJson(res);
+    } catch (parseErr) {
+      if (res.status === 405) throw new Error('Login not available. Set BACKEND_URL in Vercel or deploy the backend.');
+      if (res.status === 503) throw new Error('Backend not configured. Set BACKEND_URL in Vercel.');
+      throw new Error(parseErr.message || 'Invalid response from server');
+    }
+    if (!res.ok) throw new Error(data?.error || 'Login failed');
+    if (!data.token || !data.user) throw new Error('Invalid login response');
     setToken(data.token, data.user);
     return data.user;
   };
